@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1329" />
+  <title>TRINETRA LOGIX | Tactical Logistics Command Portal</title>
+
+  <!-- Requested CDN assets: TailwindCSS + FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#0b1329',
+            steel: '#1e293b',
+            brass: '#d97706',
+            brassdeep: '#b45309',
+            crimson: '#dc2626',
+            field: '#0f1d2d',
+            signal: '#22c55e'
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --navy: #0b1329;
+      --navy-2: #0f1a33;
+      --steel: #1e293b;
+      --steel-2: #26364b;
+      --ink: #07111f;
+      --brass: #d97706;
+      --brass-soft: #f59e0b;
+      --crimson: #dc2626;
+      --paper: #edf3f8;
+      --muted: #91a4b8;
+      --signal: #22c55e;
+      --cyan: #48cae4;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 16% 8%, rgba(217, 119, 6, .09), transparent 25rem),
+        radial-gradient(circle at 95% 24%, rgba(72, 202, 228, .07), transparent 28rem),
+        linear-gradient(135deg, #07111f 0%, #0b1329 48%, #0d192d 100%);
+      color: var(--paper);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(to bottom, black, transparent 92%);
+    }
+
+    .display-font { font-family: 'Cinzel', serif; letter-spacing: .06em; }
+    .mono { font-family: 'Courier New', monospace; letter-spacing: .06em; }
+    .muted { color: var(--muted); }
+    .gold { color: var(--brass-soft); }
+
+    .top-strip {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 22px;
+      color: #d8e3ee;
+      background: rgba(3, 10, 22, .94);
+      border-bottom: 1px solid rgba(217,119,6,.42);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 5;
+    }
+
+    .top-strip .classification { color: #fbbf24; }
+    .top-strip .strip-right { display: flex; align-items: center; gap: 16px; }
+
+    .app-shell {
+      min-height: calc(100vh - 36px);
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      min-height: calc(100vh - 36px);
+      background: rgba(6, 15, 31, .82);
+      border-right: 1px solid rgba(118, 144, 170, .2);
+      padding: 22px 16px 16px;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      z-index: 3;
+    }
+
+    .brand-lockup { display: flex; gap: 12px; align-items: center; padding: 4px 8px 26px; }
+    .brand-mark {
+      width: 48px; height: 48px; display: grid; place-items: center;
+      border: 1px solid rgba(245,158,11,.75);
+      color: var(--brass-soft); background: rgba(217,119,6,.1);
+      clip-path: polygon(50% 0%, 95% 23%, 95% 77%, 50% 100%, 5% 77%, 5% 23%);
+      font-size: 20px;
+      box-shadow: 0 0 26px rgba(217,119,6,.16);
+    }
+    .brand-title { font-size: 13px; line-height: 1.3; font-weight: 800; letter-spacing: .15em; }
+    .brand-subtitle { font-size: 9px; color: var(--muted); letter-spacing: .16em; margin-top: 3px; }
+
+    .nav-label { color: #64748b; font-size: 9px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; padding: 0 12px 10px; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-button {
+      display: flex; align-items: center; gap: 11px; width: 100%; padding: 12px 12px;
+      color: #aebdcd; background: transparent; border: 1px solid transparent; border-radius: 3px;
+      text-align: left; cursor: pointer; font: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .06em; transition: .2s ease;
+    }
+    .nav-button i { width: 17px; color: #71869b; font-size: 13px; text-align: center; }
+    .nav-button:hover { color: #fff; background: rgba(30,41,59,.65); border-color: rgba(148,163,184,.14); }
+    .nav-button.active { color: #fff7ed; background: linear-gradient(90deg, rgba(180,83,9,.35), rgba(30,41,59,.7)); border-color: rgba(217,119,6,.55); box-shadow: inset 3px 0 0 var(--brass); }
+    .nav-button.active i { color: var(--brass-soft); }
+
+    .sidebar-footer { position: absolute; left: 16px; right: 16px; bottom: 18px; }
+    .operator-card { border: 1px solid rgba(71, 91, 112, .55); background: rgba(15, 29, 45, .78); padding: 13px; }
+    .operator-card .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .operator-card .name { font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .operator-card .role { font-size: 9px; color: var(--muted); margin-top: 4px; }
+    .operator-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--signal); box-shadow: 0 0 0 4px rgba(34,197,94,.12), 0 0 15px rgba(34,197,94,.9); }
+
+    .main-panel { min-width: 0; padding: 24px clamp(16px, 3vw, 38px) 24px; }
+    .main-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 22px; }
+    .eyebrow { color: var(--brass-soft); font-size: 10px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+    .page-title { margin: 7px 0 0; font-size: clamp(22px, 3vw, 32px); line-height: 1.15; font-weight: 800; }
+    .page-subtitle { margin-top: 8px; max-width: 760px; color: #9dafc1; font-size: 12px; line-height: 1.7; }
+    .header-readout { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .readout-card { min-width: 145px; padding: 10px 12px; border: 1px solid rgba(111, 139, 164, .32); background: rgba(15, 29, 45, .64); }
+    .readout-card .label { color: #6f8499; font-size: 8px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .readout-card .value { margin-top: 5px; font-size: 12px; font-weight: 800; }
+
+    .view { display: none; animation: viewIn .34s ease both; }
+    .view.active { display: block; }
+    @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .panel {
+      position: relative;
+      background: linear-gradient(140deg, rgba(21, 38, 58, .88), rgba(8, 19, 36, .83));
+      border: 1px solid rgba(99, 124, 148, .34);
+      box-shadow: 0 16px 45px rgba(0,0,0,.19), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .panel::before, .panel::after { content:''; position: absolute; width: 9px; height: 9px; border-color: rgba(245,158,11,.84); pointer-events:none; }
+    .panel::before { left: -1px; top: -1px; border-left: 2px solid; border-top: 2px solid; }
+    .panel::after { right: -1px; bottom: -1px; border-right: 2px solid; border-bottom: 2px solid; }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(99,124,148,.25); padding: 14px 16px; }
+    .panel-heading { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .panel-heading i { color: var(--brass-soft); }
+    .panel-body { padding: 16px; }
+
+    .status-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid rgba(99,124,148,.35); background: rgba(4,12,24,.45); color: #c3d1df; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 10px var(--signal); }
+    .status-pill.critical { color: #fecaca; border-color: rgba(220,38,38,.56); }
+    .status-pill.critical .dot { background: var(--crimson); box-shadow: 0 0 10px var(--crimson); }
+    .status-pill.gold { color: #fde68a; border-color: rgba(217,119,6,.58); }
+    .status-pill.gold .dot { background: var(--brass-soft); box-shadow: 0 0 10px var(--brass-soft); }
+
+    .login-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 18px; align-items: stretch; }
+    .login-card { min-height: 595px; padding: clamp(20px, 4vw, 40px); display: flex; flex-direction: column; justify-content: center; }
+    .login-card .seal-row { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; }
+    .login-card .seal { width: 82px; height: 82px; flex: 0 0 82px; }
+    .login-card h2 { margin: 0; font-size: clamp(21px, 3vw, 30px); line-height: 1.12; }
+    .login-card .rule { height: 2px; width: 64px; background: var(--brass); margin: 12px 0; }
+    .login-card .intro { color: #9dafc1; font-size: 11px; line-height: 1.75; max-width: 610px; }
+
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { display: flex; justify-content: space-between; gap: 8px; color: #c4d1dd; font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; }
+    .field label span { color: #70859a; font-weight: 600; letter-spacing: .04em; text-transform: none; }
+    .input-wrap { position: relative; }
+    .input-wrap i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #738aa0; font-size: 12px; pointer-events: none; }
+    .input-wrap input, .select-control { width: 100%; height: 42px; padding: 0 13px 0 37px; border: 1px solid #40556b; outline: none; background: rgba(3,11,23,.66); color: #eef5fb; font: inherit; font-size: 11px; transition: .2s ease; }
+    .select-control { padding-left: 13px; appearance: none; }
+    .input-wrap input::placeholder { color: #5f7589; }
+    .input-wrap input:focus, .select-control:focus { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(217,119,6,.12); }
+    .input-wrap .toggle-key { left: auto; right: 12px; cursor: pointer; pointer-events: auto; }
+
+    .otp-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+    .otp-row input { height: 42px; padding: 0; text-align: center; border: 1px solid #40556b; outline: none; background: rgba(3,11,23,.66); color: #fff; font-size: 16px; font-weight: 800; }
+    .otp-row input:focus { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(217,119,6,.12); }
+    .clearance-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .clearance-option { position: relative; }
+    .clearance-option input { position: absolute; opacity: 0; }
+    .clearance-option label { display: flex; align-items: center; justify-content: center; min-height: 41px; padding: 7px; border: 1px solid #40556b; background: rgba(3,11,23,.5); color: #9fb1c1; cursor: pointer; font-size: 9px; font-weight: 800; letter-spacing: .06em; transition: .2s ease; text-align: center; }
+    .clearance-option input:checked + label { color: #fff7ed; border-color: var(--brass); background: rgba(180,83,9,.24); box-shadow: inset 0 -2px 0 var(--brass); }
+    .login-actions { display: flex; gap: 10px; align-items: center; margin-top: 20px; }
+    .primary-btn, .secondary-btn { border: 1px solid; min-height: 43px; padding: 0 16px; font: inherit; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: .2s ease; }
+    .primary-btn { color: #fff7ed; background: linear-gradient(135deg, #b45309, #d97706); border-color: #f59e0b; box-shadow: 0 8px 20px rgba(180,83,9,.2); }
+    .primary-btn:hover { filter: brightness(1.14); transform: translateY(-1px); }
+    .secondary-btn { color: #c7d4e0; background: rgba(3,11,23,.48); border-color: #40556b; }
+    .secondary-btn:hover { border-color: #8da0b4; color: #fff; }
+    .security-footer { margin-top: 18px; color: #6f8398; font-size: 9px; line-height: 1.6; }
+    .security-footer strong { color: #fca5a5; letter-spacing: .08em; }
+
+    .login-aside { display: grid; gap: 18px; grid-template-rows: 1fr auto; }
+    .security-card { min-height: 356px; padding: 25px 22px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; }
+    .security-card::after { content:''; position:absolute; width: 280px; height: 280px; border-radius: 50%; border: 1px dashed rgba(72,202,228,.28); animation: spin 24s linear infinite; }
+    .security-card::before { z-index: 1; }
+    .security-card > * { position: relative; z-index: 2; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .radar-badge { width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center; position: relative; background: radial-gradient(circle, rgba(34,197,94,.2) 0 4%, transparent 5% 22%, rgba(34,197,94,.1) 23% 24%, transparent 25% 46%, rgba(34,197,94,.12) 47% 48%, transparent 49% 68%, rgba(34,197,94,.14) 69% 70%, transparent 71%), repeating-conic-gradient(from 0deg, rgba(34,197,94,.15) 0 1deg, transparent 1deg 30deg); border: 1px solid rgba(34,197,94,.7); box-shadow: 0 0 0 10px rgba(34,197,94,.06), 0 0 0 22px rgba(34,197,94,.03), 0 0 34px rgba(34,197,94,.25); }
+    .radar-badge::before { content:''; position:absolute; width: 2px; height: 66px; top: 8px; left: 50%; transform-origin: 50% 67px; background: linear-gradient(to bottom, rgba(34,197,94,.1), var(--signal)); animation: radarSweep 3.2s linear infinite; box-shadow: 0 0 11px var(--signal); }
+    .radar-badge::after { content:''; position:absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 16px var(--signal); animation: beacon 1.6s ease-in-out infinite; }
+    @keyframes radarSweep { to { transform: rotate(360deg); } }
+    @keyframes beacon { 50% { transform: scale(1.7); opacity: .46; } }
+    .security-card h3 { margin: 20px 0 5px; font-size: 16px; letter-spacing: .14em; }
+    .security-card p { color: #8fa5b9; font-size: 10px; line-height: 1.65; max-width: 280px; }
+    .notice-card { padding: 16px; }
+    .notice-card p { color: #9cafc0; font-size: 10px; line-height: 1.7; margin: 8px 0 0; }
+    .notice-card strong { color: #fca5a5; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .metric-card { padding: 15px; min-height: 110px; }
+    .metric-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: #7e93a7; font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .metric-top i { color: var(--brass-soft); font-size: 13px; }
+    .metric-value { margin-top: 14px; font-size: 24px; font-weight: 800; }
+    .metric-delta { color: #94a9bb; font-size: 9px; margin-top: 4px; }
+    .metric-delta.up { color: #86efac; }
+    .metric-delta.down { color: #fca5a5; }
+
+    .overview-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); gap: 16px; }
+    .map-panel { min-height: 375px; overflow: hidden; }
+    .tactical-map { min-height: 310px; margin: 16px; position: relative; overflow: hidden; border: 1px solid rgba(72,202,228,.27); background: #0a1a2b; }
+    .tactical-map::before { content:''; position:absolute; inset:0; opacity: .38; background-image: linear-gradient(rgba(72,202,228,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(72,202,228,.16) 1px, transparent 1px); background-size: 32px 32px; }
+    .mountain { position: absolute; inset: 12% 0 0; opacity: .5; background: linear-gradient(136deg, transparent 0 12%, #183d4b 12% 22%, transparent 22% 26%, #174253 26% 39%, transparent 39% 44%, #123244 44% 52%, transparent 52% 59%, #1a4050 59% 73%, transparent 73%), linear-gradient(160deg, transparent 0 30%, #112f40 30% 45%, transparent 45% 60%, #173949 60% 82%, transparent 82%); clip-path: polygon(0 44%, 15% 25%, 27% 41%, 43% 12%, 59% 37%, 77% 20%, 100% 46%, 100% 100%, 0 100%); }
+    .map-line { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, rgba(245,158,11,.9), transparent); transform-origin: left center; box-shadow: 0 0 10px rgba(245,158,11,.45); }
+    .line-a { width: 42%; left: 15%; top: 64%; transform: rotate(-22deg); }
+    .line-b { width: 35%; left: 44%; top: 45%; transform: rotate(37deg); }
+    .line-c { width: 55%; left: 24%; top: 72%; transform: rotate(-4deg); opacity: .5; }
+    .map-node { width: 12px; height: 12px; position: absolute; border-radius: 50%; border: 2px solid #fff; background: var(--brass-soft); box-shadow: 0 0 0 5px rgba(245,158,11,.18), 0 0 18px rgba(245,158,11,.9); }
+    .map-node::after { content: attr(data-label); position: absolute; left: 17px; top: -4px; white-space: nowrap; color: #dbeafe; font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+    .node-1 { left: 13%; top: 66%; }
+    .node-2 { left: 44%; top: 43%; background: var(--signal); box-shadow: 0 0 0 5px rgba(34,197,94,.14), 0 0 18px rgba(34,197,94,.8); }
+    .node-3 { left: 76%; top: 65%; background: var(--crimson); box-shadow: 0 0 0 5px rgba(220,38,38,.14), 0 0 18px rgba(220,38,38,.8); }
+    .map-legend { position: absolute; bottom: 12px; left: 12px; display:flex; gap: 12px; flex-wrap: wrap; color: #a9bccd; font-size: 9px; background: rgba(4,12,24,.66); padding: 8px; border: 1px solid rgba(92,118,140,.3); }
+    .legend-item { display:flex; align-items:center; gap:5px; }
+    .legend-dot { width: 7px; height: 7px; border-radius:50%; background: var(--brass-soft); }
+    .legend-dot.green { background: var(--signal); }
+    .legend-dot.red { background: var(--crimson); }
+
+    .alert-stack { display: grid; gap: 10px; }
+    .alert-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; padding: 11px; border: 1px solid rgba(99,124,148,.27); background: rgba(4,12,24,.34); }
+    .alert-icon { width: 27px; height: 27px; display:grid; place-items:center; color: #fecaca; background: rgba(220,38,38,.18); border: 1px solid rgba(220,38,38,.5); font-size: 11px; }
+    .alert-row.info .alert-icon { color: #bae6fd; background: rgba(14,116,144,.18); border-color: rgba(72,202,228,.44); }
+    .alert-title { font-size: 10px; font-weight: 800; letter-spacing: .05em; }
+    .alert-meta { margin-top: 4px; color: #7e93a7; font-size: 9px; }
+
+    .risk-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 16px; }
+    .risk-score { display: grid; place-items: center; min-height: 290px; padding: 20px; }
+    .score-ring { width: 188px; height: 188px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--crimson) 0 76%, rgba(220,38,38,.12) 76% 100%); position: relative; box-shadow: 0 0 32px rgba(220,38,38,.15); }
+    .score-ring::before { content:''; position:absolute; inset: 11px; background: #101f32; border-radius: inherit; border: 1px solid rgba(220,38,38,.28); }
+    .score-content { position: relative; text-align: center; }
+    .score-number { font-size: 47px; font-weight: 800; line-height: 1; color: #fecaca; }
+    .score-caption { margin-top: 9px; color: #e4eaf0; font-size: 9px; font-weight: 800; letter-spacing: .15em; }
+    .range-wrap { width: 100%; margin-top: 22px; }
+    .range-wrap input[type=range] { width: 100%; accent-color: var(--crimson); cursor: pointer; }
+    .range-labels { display:flex; justify-content:space-between; color:#7e93a7; font-size:8px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .risk-factors { display: grid; gap: 9px; }
+    .factor { padding: 11px; background: rgba(4,12,24,.34); border: 1px solid rgba(99,124,148,.27); }
+    .factor-top { display:flex; justify-content:space-between; gap:10px; font-size: 10px; font-weight: 800; }
+    .factor-score { color: #fca5a5; }
+    .factor-bar { height: 5px; margin-top: 8px; background: #233448; overflow: hidden; }
+    .factor-bar span { display:block; height:100%; background: linear-gradient(90deg, #f59e0b, #dc2626); }
+    .risk-table { margin-top: 16px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 560px; }
+    th, td { padding: 11px 10px; border-bottom: 1px solid rgba(99,124,148,.2); text-align: left; white-space: nowrap; }
+    th { color: #71869b; font-size: 8px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    td { color: #d6e0e9; font-size: 10px; }
+    tr:hover td { background: rgba(255,255,255,.025); }
+
+    .routes-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: 16px; }
+    .route-map { min-height: 390px; }
+    .route-map .tactical-map { min-height: 322px; }
+    .drone-list { display: grid; gap: 9px; }
+    .drone-row { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 10px; border: 1px solid rgba(99,124,148,.27); background: rgba(4,12,24,.34); }
+    .drone-icon { width: 28px; height: 28px; display:grid; place-items:center; color: #bae6fd; background: rgba(14,116,144,.18); border: 1px solid rgba(72,202,228,.4); }
+    .drone-name { font-size: 10px; font-weight: 800; }
+    .drone-meta { margin-top: 4px; color:#7e93a7; font-size:9px; }
+    .drone-battery { text-align:right; color:#86efac; font-size:10px; font-weight:800; }
+    .progress { width: 76px; height: 4px; background:#233448; margin-top: 5px; overflow:hidden; }
+    .progress span { display:block; height:100%; background:var(--signal); }
+
+    .toast { position: fixed; z-index: 30; right: 22px; bottom: 22px; min-width: 270px; max-width: 380px; padding: 13px 15px; border: 1px solid rgba(34,197,94,.5); background: rgba(7,17,31,.96); box-shadow: 0 14px 35px rgba(0,0,0,.32); display: flex; gap: 10px; align-items: flex-start; transform: translateY(30px); opacity: 0; pointer-events: none; transition: .28s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--signal); margin-top: 2px; }
+    .toast-title { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .toast-copy { color:#92a6ba; font-size:10px; line-height:1.5; margin-top:4px; }
+    .mobile-toggle { display:none; }
+
+    @media (max-width: 1080px) {
+      .app-shell { grid-template-columns: 218px minmax(0,1fr); }
+      .sidebar { padding-inline: 11px; }
+      .sidebar-footer { left: 11px; right: 11px; }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .login-grid, .overview-grid, .risk-layout, .routes-grid { grid-template-columns: 1fr; }
+      .login-card { min-height: auto; }
+      .login-aside { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .security-card { min-height: 290px; }
+    }
+    @media (max-width: 760px) {
+      .top-strip { padding-inline: 12px; font-size: 8px; letter-spacing:.09em; }
+      .top-strip .strip-right { gap:8px; }
+      .top-strip .hide-small { display:none; }
+      .app-shell { display:block; }
+      .sidebar { min-height: unset; position: sticky; top: 0; border-right: 0; border-bottom: 1px solid rgba(118,144,170,.2); padding: 10px 12px; background: rgba(6,15,31,.96); }
+      .brand-lockup { padding: 0; }
+      .brand-mark { width: 38px; height: 38px; font-size: 15px; }
+      .brand-title { font-size: 11px; }
+      .brand-subtitle { font-size: 8px; }
+      .mobile-toggle { display:block; margin-left:auto; background:transparent; border:1px solid #40556b; color:#cbd5e1; width:36px; height:34px; cursor:pointer; }
+      .nav-label, .sidebar-footer { display:none; }
+      .nav-list { display:none; padding-top: 10px; }
+      .sidebar.open .nav-list { display:grid; }
+      .main-panel { padding: 18px 12px 22px; }
+      .main-header { display:block; }
+      .header-readout { justify-content:flex-start; margin-top:14px; }
+      .readout-card { flex:1; min-width: 120px; }
+      .field-grid { grid-template-columns:1fr; }
+      .field.full { grid-column:auto; }
+      .login-aside { grid-template-columns:1fr; }
+      .metric-grid { grid-template-columns:1fr 1fr; gap:8px; }
+      .metric-card { min-height: 102px; padding: 12px; }
+      .metric-value { font-size:20px; }
+      .panel-header { padding: 12px; }
+      .panel-body { padding: 12px; }
+      .tactical-map { margin:12px; }
+      .otp-row { gap:4px; }
+      .otp-row input { height:38px; }
+    }
+    @media (max-width: 430px) {
+      .metric-grid { grid-template-columns:1fr; }
+      .header-readout { display:grid; grid-template-columns:1fr 1fr; }
+      .readout-card { min-width:0; }
+      .login-actions { flex-direction:column; align-items:stretch; }
+      .primary-btn, .secondary-btn { width:100%; }
+      .clearance-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-strip">
+    <div><span class="classification">MINISTRY OF DEFENCE</span> <span class="hide-small">• GOVERNMENT OF INDIA</span></div>
+    <div class="strip-right"><span class="hide-small">SECURE OPERATIONS NETWORK</span><span class="mono" id="stripClock">--:--:-- IST</span></div>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-lockup">
+        <div class="brand-mark"><i class="fa-solid fa-eye"></i></div>
+        <div>
+          <div class="brand-title display-font">TRINETRA<br/>LOGIX</div>
+          <div class="brand-subtitle">HAT LOGISTICS COMMAND</div>
+        </div>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+
+      <div class="nav-label">Operations Console</div>
+      <nav class="nav-list" id="navList">
+        <button class="nav-button active" data-view="loginView"><i class="fa-solid fa-shield-halved"></i><span>Login Portal</span></button>
+        <button class="nav-button" data-view="overviewView"><i class="fa-solid fa-compass"></i><span>Command Center Overview</span></button>
+        <button class="nav-button" data-view="riskView"><i class="fa-solid fa-cloud-bolt"></i><span>Weather &amp; Pass Risk</span></button>
+        <button class="nav-button" data-view="routesView"><i class="fa-solid fa-helicopter"></i><span>Drone Supply Routes</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="operator-card">
+          <div class="row"><div class="name">OPERATOR: ARJUN-07</div><div class="operator-dot"></div></div>
+          <div class="role">SECURITY CLEARANCE: LEVEL-4 / RESTRICTED</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="main-header">
+        <div>
+          <div class="eyebrow">Integrated Tactical Logistics Grid / North Sector</div>
+          <h1 class="page-title display-font">High-Altitude Supply Chain Command Portal</h1>
+          <p class="page-subtitle">TRINETRA LOGIX fuses demand signals, pass-risk intelligence, inventory telemetry and autonomous resupply routing into one operational picture for forward formations.</p>
+        </div>
+        <div class="header-readout">
+          <div class="readout-card"><div class="label">Indian Standard Time</div><div class="value mono" id="istClock">--:--:--</div></div>
+          <div class="readout-card"><div class="label">UTC Military Time</div><div class="value mono" id="utcClock">--:--:-- Z</div></div>
+        </div>
+      </header>
+
+      <!-- LOGIN PORTAL -->
+      <section class="view active" id="loginView">
+        <div class="login-grid">
+          <div class="panel login-card">
+            <div class="seal-row">
+              <svg class="seal" viewBox="0 0 100 100" aria-label="Ashoka emblem placeholder" role="img">
+                <circle cx="50" cy="50" r="47" fill="none" stroke="#d97706" stroke-width="2"/>
+                <circle cx="50" cy="50" r="39" fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="2 3"/>
+                <path d="M50 19 L56 35 L73 36 L60 46 L64 63 L50 53 L36 63 L40 46 L27 36 L44 35 Z" fill="none" stroke="#f59e0b" stroke-width="2"/>
+                <path d="M29 69 Q50 83 71 69 M33 74 Q50 87 67 74" fill="none" stroke="#f59e0b" stroke-width="1.3"/>
+                <text x="50" y="31" fill="#f8fafc" text-anchor="middle" font-size="7" font-family="Cinzel">सत्यमेव</text>
+                <text x="50" y="94" fill="#f59e0b" text-anchor="middle" font-size="5" font-family="Inter" letter-spacing="1">JAYATE</text>
+              </svg>
+              <div>
+                <div class="eyebrow">Authorized access gateway</div>
+                <h2 class="display-font">Secure Military Access</h2>
+                <div class="rule"></div>
+                <p class="intro">Authenticate with your service identity, cryptographic key and one-time verification token to enter the restricted logistics command layer.</p>
+              </div>
+            </div>
+
+            <form id="loginForm" autocomplete="off">
+              <div class="field-grid">
+                <div class="field">
+                  <label for="serviceId">Service ID <span>Required</span></label>
+                  <div class="input-wrap"><i class="fa-solid fa-id-card"></i><input id="serviceId" name="serviceId" placeholder="e.g. IA-OPS-0427" required /></div>
+                </div>
+                <div class="field">
+                  <label for="rank">Defense Rank <span>Required</span></label>
+                  <div class="input-wrap"><i class="fa-solid fa-star"></i><input id="rank" name="rank" placeholder="e.g. Major / Logistics" required /></div>
+                </div>
+                <div class="field full">
+                  <label for="securityKey">Security PIN / Cryptographic Key <span>Encrypted channel</span></label>
+                  <div class="input-wrap"><i class="fa-solid fa-key"></i><input id="securityKey" name="securityKey" type="password" placeholder="Enter secure access key" required /><i class="fa-solid fa-eye toggle-key" id="toggleKey" title="Show or hide key"></i></div>
+                </div>
+                <div class="field full">
+                  <label>Multi-Factor / OTP Verification <span>6-digit token</span></label>
+                  <div class="otp-row" id="otpRow">
+                    <input inputmode="numeric" maxlength="1" aria-label="OTP digit 1" required />
+                    <input inputmode="numeric" maxlength="1" aria-label="OTP digit 2" required />
+                    <input inputmode="numeric" maxlength="1" aria-label="OTP digit 3" required />
+                    <input inputmode="numeric" maxlength="1" aria-label="OTP digit 4" required />
+                    <input inputmode="numeric" maxlength="1" aria-label="OTP digit 5" required />
+                    <input inputmode="numeric" maxlength="1" aria-label="OTP digit 6" required />
+                  </div>
+                </div>
+                <div class="field full">
+                  <label>Biometric / Security Clearance <span>Choose current authorization</span></label>
+                  <div class="clearance-row">
+                    <div class="clearance-option"><input type="radio" name="clearance" id="clearance2" value="Level-2" /><label for="clearance2">LEVEL-2<br/>FIELD</label></div>
+                    <div class="clearance-option"><input type="radio" name="clearance" id="clearance3" value="Level-3" /><label for="clearance3">LEVEL-3<br/>COMMAND</label></div>
+                    <div class="clearance-option"><input type="radio" name="clearance" id="clearance4" value="Level-4" checked /><label for="clearance4">LEVEL-4<br/>RESTRICTED AREA</label></div>
+                  </div>
+                </div>
+              </div>
+              <div class="login-actions">
+                <button class="primary-btn" type="submit"><i class="fa-solid fa-fingerprint mr-2"></i>Enter Secure Console</button>
+                <button class="secondary-btn" type="button" id="requestOtp"><i class="fa-solid fa-rotate mr-2"></i>Request OTP</button>
+              </div>
+            </form>
+            <div class="security-footer"><strong>CONFIDENTIAL - RESTRICTED TO AUTHORIZED ARMED FORCES PERSONNEL ONLY.</strong><br/>Unauthorized access, attempted access or dissemination of information is prohibited and may be subject to prosecution under applicable law.</div>
+          </div>
+
+          <div class="login-aside">
+            <div class="panel security-card">
+              <div class="radar-badge"><i class="fa-solid fa-shield-halved" style="color:#bbf7d0;font-size:24px;z-index:1"></i></div>
+              <h3 class="display-font">SECURITY STATUS</h3>
+              <div class="status-pill"><span class="dot"></span>CRYPTOVALIDATION STANDBY</div>
+              <p>Secure gateway is online. Session telemetry is monitored by the North Sector Operations Security Cell.</p>
+            </div>
+            <div class="panel notice-card">
+              <div class="panel-heading"><i class="fa-solid fa-triangle-exclamation"></i><span>Security Notice</span></div>
+              <p><strong>Do not share credentials.</strong> Biometric verification is simulated for this prototype. All operational values shown after login are training data and not live military information.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMMAND CENTER -->
+      <section class="view" id="overviewView">
+        <div class="metric-grid">
+          <div class="panel metric-card"><div class="metric-top"><span>Forward Stock Coverage</span><i class="fa-solid fa-boxes-stacked"></i></div><div class="metric-value">6.8 <small class="text-sm text-slate-400">days</small></div><div class="metric-delta up"><i class="fa-solid fa-arrow-up"></i> 12.4% vs last cycle</div></div>
+          <div class="panel metric-card"><div class="metric-top"><span>Active Convoys</span><i class="fa-solid fa-truck-fast"></i></div><div class="metric-value">18</div><div class="metric-delta"><span class="text-amber-300">03</span> awaiting pass clearance</div></div>
+          <div class="panel metric-card"><div class="metric-top"><span>Demand Confidence</span><i class="fa-solid fa-chart-line"></i></div><div class="metric-value">91.6<small class="text-sm text-slate-400">%</small></div><div class="metric-delta up"><i class="fa-solid fa-arrow-up"></i> ML forecast confidence</div></div>
+          <div class="panel metric-card"><div class="metric-top"><span>Critical Alerts</span><i class="fa-solid fa-bell"></i></div><div class="metric-value text-red-300">04</div><div class="metric-delta down"><i class="fa-solid fa-arrow-down"></i> 01 unresolved priority</div></div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="panel map-panel">
+            <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-map-location-dot"></i><span>North Sector Operational Picture</span></div><span class="status-pill"><span class="dot"></span>OFFLINE MESH SYNC: ACTIVE</span></div>
+            <div class="tactical-map">
+              <div class="mountain"></div><div class="line-a map-line"></div><div class="line-b map-line"></div><div class="line-c map-line"></div>
+              <div class="map-node node-1" data-label="BASE ALPHA"></div><div class="map-node node-2" data-label="FWD POST 17"></div><div class="map-node node-3" data-label="PASS ZULU"></div>
+              <div class="absolute top-3 left-3 text-[9px] tracking-[.18em] text-cyan-200 font-bold">GRID REF: 43Q / NORTH SECTOR</div>
+              <div class="absolute top-3 right-3 text-[9px] tracking-[.14em] text-slate-300 font-bold mono" id="mapTime">00:00:00Z</div>
+              <div class="map-legend"><span class="legend-item"><span class="legend-dot"></span>Supply node</span><span class="legend-item"><span class="legend-dot green"></span>Mesh online</span><span class="legend-item"><span class="legend-dot red"></span>Risk corridor</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-satellite-dish"></i><span>Priority Signal Queue</span></div><span class="mono text-[9px] text-slate-400">AUTO REFRESH 30S</span></div>
+            <div class="panel-body"><div class="alert-stack">
+              <div class="alert-row"><div class="alert-icon"><i class="fa-solid fa-mountain"></i></div><div><div class="alert-title">PASS ZULU / AVALANCHE WATCH</div><div class="alert-meta">HAT-WVI 76 • Movement hold recommended</div></div><span class="status-pill critical"><span class="dot"></span>Critical</span></div>
+              <div class="alert-row info"><div class="alert-icon"><i class="fa-solid fa-box-open"></i></div><div><div class="alert-title">FWD POST 17 / MEDICAL STOCK</div><div class="alert-meta">Forecast depletion in 18 hours</div></div><span class="status-pill gold"><span class="dot"></span>Priority</span></div>
+              <div class="alert-row info"><div class="alert-icon"><i class="fa-solid fa-wifi"></i></div><div><div class="alert-title">MESH RELAY 04 / SYNC COMPLETE</div><div class="alert-meta">Last packet received 00:02:14 ago</div></div><span class="status-pill"><span class="dot"></span>Online</span></div>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEATHER / PASS RISK -->
+      <section class="view" id="riskView">
+        <div class="risk-layout">
+          <div class="panel risk-score">
+            <div class="eyebrow">HAT-WVI / High-Altitude Weather Visibility Index</div>
+            <div class="score-ring" id="scoreRing"><div class="score-content"><div class="score-number" id="riskScore">76</div><div class="score-caption">RISK INDEX</div></div></div>
+            <div class="status-pill critical"><span class="dot"></span>PASS STATUS: CRITICAL</div>
+            <div class="range-wrap"><input type="range" min="0" max="100" value="76" id="riskSlider" aria-label="Adjust risk score" /><div class="range-labels"><span>Low</span><span>Moderate</span><span>Critical</span></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-cloud-sun-rain"></i><span>Risk Contributors</span></div><span class="mono text-[9px] text-slate-400">MODEL: HAT-WVI v2.6</span></div>
+            <div class="panel-body"><div class="risk-factors">
+              <div class="factor"><div class="factor-top"><span>Visibility degradation</span><span class="factor-score">86 / 100</span></div><div class="factor-bar"><span style="width:86%"></span></div></div>
+              <div class="factor"><div class="factor-top"><span>Wind shear / gusts</span><span class="factor-score">72 / 100</span></div><div class="factor-bar"><span style="width:72%"></span></div></div>
+              <div class="factor"><div class="factor-top"><span>Snow accumulation</span><span class="factor-score">69 / 100</span></div><div class="factor-bar"><span style="width:69%"></span></div></div>
+              <div class="factor"><div class="factor-top"><span>Route surface stability</span><span class="factor-score">63 / 100</span></div><div class="factor-bar"><span style="width:63%"></span></div></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="panel risk-table">
+          <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-list-check"></i><span>Pass Assessment Matrix</span></div><button class="secondary-btn" id="refreshRisk"><i class="fa-solid fa-arrows-rotate mr-2"></i>Refresh</button></div>
+          <table><thead><tr><th>Pass / Corridor</th><th>Visibility</th><th>Wind</th><th>Surface</th><th>Recommendation</th><th>Last update</th></tr></thead><tbody>
+            <tr><td class="font-bold">ZULU PASS <span class="text-slate-500">/ 17,400 ft</span></td><td class="text-red-300">Severe</td><td class="text-amber-300">38 kt</td><td class="text-red-300">Unstable</td><td><span class="status-pill critical"><span class="dot"></span>Hold</span></td><td class="mono text-slate-400">04:18Z</td></tr>
+            <tr><td class="font-bold">KILO RIDGE <span class="text-slate-500">/ 15,900 ft</span></td><td class="text-amber-300">Reduced</td><td class="text-amber-300">24 kt</td><td class="text-emerald-300">Stable</td><td><span class="status-pill gold"><span class="dot"></span>Convoy window</span></td><td class="mono text-slate-400">04:15Z</td></tr>
+            <tr><td class="font-bold">SIERRA TRACK <span class="text-slate-500">/ 14,800 ft</span></td><td class="text-emerald-300">Clear</td><td class="text-emerald-300">12 kt</td><td class="text-emerald-300">Stable</td><td><span class="status-pill"><span class="dot"></span>Open</span></td><td class="mono text-slate-400">04:11Z</td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <!-- DRONE ROUTES -->
+      <section class="view" id="routesView">
+        <div class="routes-grid">
+          <div class="panel route-map">
+            <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-route"></i><span>Autonomous Resupply Route Planner</span></div><span class="status-pill"><span class="dot"></span>LINK STABLE</span></div>
+            <div class="tactical-map">
+              <div class="mountain"></div><div class="line-a map-line"></div><div class="line-b map-line"></div><div class="line-c map-line"></div>
+              <div class="absolute left-[15%] top-[66%] text-slate-200 text-[9px] font-bold tracking-widest">BASE ALPHA</div>
+              <div class="absolute left-[44%] top-[43%] text-emerald-200 text-[9px] font-bold tracking-widest">FWD POST 17</div>
+              <div class="absolute left-[76%] top-[65%] text-red-200 text-[9px] font-bold tracking-widest">PASS ZULU</div>
+              <div class="drone-pulse absolute left-[38%] top-[38%]" style="width:12px;height:12px;border-radius:50%;background:#48cae4;box-shadow:0 0 0 8px rgba(72,202,228,.12),0 0 20px #48cae4"></div>
+              <div class="drone-pulse absolute left-[57%] top-[55%]" style="width:12px;height:12px;border-radius:50%;background:#48cae4;box-shadow:0 0 0 8px rgba(72,202,228,.12),0 0 20px #48cae4;animation-delay:.8s"></div>
+              <div class="absolute bottom-3 left-3 right-3 flex justify-between gap-2 text-[9px] text-slate-300 bg-slate-950/70 border border-slate-600/50 p-2"><span><i class="fa-solid fa-satellite-dish text-cyan-300 mr-1"></i>2 autonomous links</span><span class="mono">LATENCY 142ms</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-plane-up"></i><span>Active Drone Fleet</span></div><span class="mono text-[9px] text-slate-400">04 ASSETS</span></div>
+            <div class="panel-body"><div class="drone-list">
+              <div class="drone-row"><div class="drone-icon"><i class="fa-solid fa-plane-up"></i></div><div><div class="drone-name">GARUD-01 <span class="text-emerald-300">• IN FLIGHT</span></div><div class="drone-meta">MED-04 • ETA 00:18 • ALT 15,400 ft</div></div><div class="drone-battery">82%<div class="progress"><span style="width:82%"></span></div></div></div>
+              <div class="drone-row"><div class="drone-icon"><i class="fa-solid fa-plane-up"></i></div><div><div class="drone-name">GARUD-02 <span class="text-amber-300">• LOADING</span></div><div class="drone-meta">RAT-11 • DEP 00:26 • BASE ALPHA</div></div><div class="drone-battery">96%<div class="progress"><span style="width:96%"></span></div></div></div>
+              <div class="drone-row"><div class="drone-icon"><i class="fa-solid fa-plane-up"></i></div><div><div class="drone-name">GARUD-03 <span class="text-emerald-300">• IN FLIGHT</span></div><div class="drone-meta">FOOD-08 • ETA 00:31 • ALT 14,900 ft</div></div><div class="drone-battery">64%<div class="progress"><span style="width:64%"></span></div></div></div>
+              <div class="drone-row"><div class="drone-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div><div><div class="drone-name">GARUD-04 <span class="text-slate-400">• MAINTENANCE</span></div><div class="drone-meta">PROPULSION CHECK • BAY 02</div></div><div class="drone-battery text-slate-400">OFF</div></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="panel risk-table">
+          <div class="panel-header"><div class="panel-heading"><i class="fa-solid fa-boxes-packing"></i><span>Manifest &amp; Route Allocation</span></div><button class="secondary-btn" id="optimizeRoutes"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Optimize</button></div>
+          <table><thead><tr><th>Asset</th><th>Priority cargo</th><th>Origin</th><th>Destination</th><th>Route status</th><th>ETA</th></tr></thead><tbody>
+            <tr><td class="font-bold">GARUD-01</td><td>Medical kits / 48 kg</td><td>Base Alpha</td><td>Fwd Post 17</td><td><span class="status-pill"><span class="dot"></span>In transit</span></td><td class="mono">00:18</td></tr>
+            <tr><td class="font-bold">GARUD-02</td><td>Ration packs / 76 kg</td><td>Base Alpha</td><td>Fwd Post 17</td><td><span class="status-pill gold"><span class="dot"></span>Loading</span></td><td class="mono">00:26</td></tr>
+            <tr><td class="font-bold">GARUD-03</td><td>Heating fuel / 62 kg</td><td>Fwd Post 17</td><td>Relay Kilo</td><td><span class="status-pill"><span class="dot"></span>In transit</span></td><td class="mono">00:31</td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-2 text-[9px] text-slate-500 tracking-[.08em] uppercase"><span>TRINETRA LOGIX • Prototype Command Interface • Training Data Only</span><span class="mono">SESSION ID: TLX-N4-<span id="sessionCode">7A41</span></span></div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><i class="fa-solid fa-circle-check"></i><div><div class="toast-title" id="toastTitle">System Message</div><div class="toast-copy" id="toastCopy">Ready.</div></div></div>
+
+  <script>
+    (() => {
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+      const state = { authenticated: false, otpRequested: false };
+
+      function pad(value) { return String(value).padStart(2, '0'); }
+      function formatClock(timeZone, showZone = false) {
+        const date = new Date();
+        const parts = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).formatToParts(date);
+        const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+        return `${map.hour}:${map.minute}:${map.second}${showZone ? ' Z' : ''}`;
+      }
+      function updateClocks() {
+        const ist = formatClock('Asia/Kolkata');
+        const utc = formatClock('UTC', true);
+        $('#istClock').textContent = ist;
+        $('#utcClock').textContent = utc;
+        $('#stripClock').textContent = `${ist} IST`;
+        $('#mapTime').textContent = utc;
+      }
+      updateClocks();
+      setInterval(updateClocks, 1000);
+
+      function showToast(title, copy, type = 'success') {
+        $('#toastTitle').textContent = title;
+        $('#toastCopy').textContent = copy;
+        const toast = $('#toast');
+        toast.style.borderColor = type === 'warning' ? 'rgba(245,158,11,.6)' : type === 'error' ? 'rgba(220,38,38,.6)' : 'rgba(34,197,94,.5)';
+        $('.toast i', toast).className = type === 'warning' ? 'fa-solid fa-triangle-exclamation' : type === 'error' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-circle-check';
+        $('.toast i', toast).style.color = type === 'warning' ? '#fbbf24' : type === 'error' ? '#fca5a5' : '#86efac';
+        toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove('show'), 4200);
+      }
+
+      function switchView(viewId) {
+        $$('.view').forEach(view => view.classList.toggle('active', view.id === viewId));
+        $$('.nav-button').forEach(button => button.classList.toggle('active', button.dataset.view === viewId));
+        $('#sidebar').classList.remove('open');
+        if (viewId !== 'loginView' && !state.authenticated) {
+          showToast('Authentication Required', 'Complete secure access simulation before opening operational views.', 'warning');
+          $$('.view').forEach(view => view.classList.toggle('active', view.id === 'loginView'));
+          $$('.nav-button').forEach(button => button.classList.toggle('active', button.dataset.view === 'loginView'));
+        }
+      }
+
+      $$('.nav-button').forEach(button => button.addEventListener('click', () => switchView(button.dataset.view)));
+      $('#mobileToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+
+      $('#toggleKey').addEventListener('click', () => {
+        const input = $('#securityKey');
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        $('#toggleKey').className = showing ? 'fa-solid fa-eye toggle-key' : 'fa-solid fa-eye-slash toggle-key';
+      });
+
+      const otpInputs = $$('#otpRow input');
+      otpInputs.forEach((input, index) => {
+        input.addEventListener('input', event => {
+          event.target.value = event.target.value.replace(/\D/g, '').slice(-1);
+          if (event.target.value && otpInputs[index + 1]) otpInputs[index + 1].focus();
+        });
+        input.addEventListener('keydown', event => {
+          if (event.key === 'Backspace' && !input.value && otpInputs[index - 1]) otpInputs[index - 1].focus();
+        });
+        input.addEventListener('paste', event => {
+          const pasted = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+          if (!pasted) return;
+          event.preventDefault();
+          pasted.split('').forEach((digit, digitIndex) => { if (otpInputs[digitIndex]) otpInputs[digitIndex].value = digit; });
+          otpInputs[Math.min(pasted.length, 6) - 1].focus();
+        });
+      });
+
+      $('#requestOtp').addEventListener('click', () => {
+        const serviceId = $('#serviceId').value.trim();
+        if (!serviceId) {
+          showToast('Service ID Required', 'Enter a service identity before requesting an OTP.', 'warning');
+          $('#serviceId').focus();
+          return;
+        }
+        state.otpRequested = true;
+        const demoOtp = String(Math.floor(100000 + Math.random() * 900000));
+        otpInputs.forEach((input, index) => input.value = demoOtp[index]);
+        showToast('OTP Token Issued', `Prototype token ${demoOtp} inserted into the verification channel.`);
+      });
+
+      $('#loginForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const otp = otpInputs.map(input => input.value).join('');
+        const required = [$('#serviceId').value.trim(), $('#rank').value.trim(), $('#securityKey').value.trim(), otp].every(Boolean);
+        if (!required || otp.length !== 6) {
+          showToast('Access Denied', 'Complete Service ID, rank, cryptographic key and 6-digit OTP fields.', 'error');
+          return;
+        }
+        state.authenticated = true;
+        $('#sessionCode').textContent = Math.random().toString(16).slice(2, 6).toUpperCase();
+        showToast('Secure Console Unlocked', 'Cryptographic handshake simulated. Command views are now available.');
+        setTimeout(() => switchView('overviewView'), 550);
+      });
+
+      const riskSlider = $('#riskSlider');
+      const riskScore = $('#riskScore');
+      const scoreRing = $('#scoreRing');
+      function updateRisk(value) {
+        const score = Number(value);
+        riskScore.textContent = score;
+        scoreRing.style.background = `conic-gradient(${score >= 70 ? '#dc2626' : score >= 40 ? '#f59e0b' : '#22c55e'} 0 ${score}%, rgba(148,163,184,.13) ${score}% 100%)`;
+      }
+      riskSlider.addEventListener('input', event => updateRisk(event.target.value));
+      $('#refreshRisk').addEventListener('click', () => {
+        const value = Math.floor(62 + Math.random() * 28);
+        riskSlider.value = value; updateRisk(value);
+        showToast('Risk Matrix Refreshed', `HAT-WVI model returned an index of ${value}.`);
+      });
+      $('#optimizeRoutes').addEventListener('click', () => showToast('Route Optimization Complete', 'Two drone corridors re-sequenced around the current pass-risk envelope.'));
+
+      // A small live telemetry shimmer keeps the tactical map feeling active.
+      setInterval(() => {
+        $$('.drone-pulse').forEach(node => { node.style.transform = `scale(${1 + Math.random() * .55})`; });
+      }, 1250);
+    })();
+  </script>
+</body>
+</html>
