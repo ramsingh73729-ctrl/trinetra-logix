@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071118" />
+    <meta
+      name="description"
+      content="TRINETRA LOGIX — predictive forward supply chain command center prototype."
+    />
+    <title>TRINETRA LOGIX · Forward Supply Command</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23071118'/%3E%3Cpath d='M16 44 32 12l16 32-16-8-16 8Z' fill='%23b7f35a'/%3E%3Ccircle cx='32' cy='30' r='6' fill='%23071118'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#overview" aria-label="TRINETRA LOGIX command center">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="brand-copy">
+            <strong>TRINETRA <em>LOGIX</em></strong>
+            <small>FORWARD SUPPLY COMMAND</small>
+          </span>
+        </a>
+        <div class="topbar-right">
+          <span class="secure-pill"><span class="status-dot online"></span> SECURE DEMO LINK</span>
+          <button class="control-button subtle" id="syncButton" type="button">
+            <span class="button-icon">↻</span><span data-en="Sync now" data-hi="सिंक करें">Sync now</span>
+          </button>
+          <button class="link-status" id="linkModeToggle" type="button" aria-pressed="false">
+            <span class="status-dot online" id="linkDot"></span>
+            <span id="linkModeLabel">SATCOM · 64 kbps</span>
+          </button>
+          <button class="language-button" id="languageToggle" type="button" aria-label="Switch language">हिं / EN</button>
+          <div class="operator-chip"><span class="operator-avatar">RS</span><span><strong>Ops control</strong><small>North sector</small></span></div>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar" aria-label="Primary navigation">
+          <div class="sidebar-label">OPERATIONS / <span>01</span></div>
+          <nav class="side-nav">
+            <a class="nav-item active" href="#overview"><span class="nav-icon">⌂</span><span data-en="Command center" data-hi="कमांड सेंटर">Command center</span><span class="nav-count">01</span></a>
+            <a class="nav-item" href="#forecast"><span class="nav-icon">◒</span><span data-en="Forecast & stock" data-hi="पूर्वानुमान और स्टॉक">Forecast & stock</span></a>
+            <a class="nav-item" href="#routing"><span class="nav-icon">⌁</span><span data-en="Tactical routing" data-hi="टैक्टिकल रूटिंग">Tactical routing</span><span class="nav-alert">!</span></a>
+            <a class="nav-item" href="#sandbox"><span class="nav-icon">◈</span><span data-en="What-if sandbox" data-hi="व्हाट-इफ सैंडबॉक्स">What-if sandbox</span></a>
+            <a class="nav-item" href="#audit"><span class="nav-icon">✓</span><span data-en="Integrity audit" data-hi="इंटीग्रिटी ऑडिट">Integrity audit</span></a>
+          </nav>
+
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-label">CONNECTED NODES</div>
+          <div class="node-list">
+            <div class="node-row"><span class="status-dot online"></span><span>Leh Central Depot</span><small>SYNCED</small></div>
+            <div class="node-row"><span class="status-dot online"></span><span>Kargil Transit Hub</span><small>SYNCED</small></div>
+            <div class="node-row"><span class="status-dot warning"></span><span>KM-Zero / Drass</span><small>LOW LINK</small></div>
+            <div class="node-row"><span class="status-dot offline"></span><span>Forward mesh 04</span><small>QUEUED</small></div>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="mesh-card">
+              <div class="mesh-card-top"><span class="mini-signal">⌁</span><span>EDGE MESH</span><span class="live-label">LIVE</span></div>
+              <strong id="meshState">4 nodes · 0 conflicts</strong>
+              <div class="mini-progress"><span style="width: 76%"></span></div>
+              <small>CRDT queue protected</small>
+            </div>
+            <small class="build-label">TRINETRA LOGIX / v0.9 demo</small>
+          </div>
+        </aside>
+
+        <main class="main-content" id="overview">
+          <section class="page-intro">
+            <div>
+              <div class="eyebrow"><span class="pulse-ring"></span> NORTHERN THEATRE · 02 OCT 2026 · 16:34 IST</div>
+              <h1>Forward supply picture</h1>
+              <p>One operational view for demand, terrain, dispatch and resilient edge sync.</p>
+            </div>
+            <div class="intro-actions">
+              <button class="control-button primary" id="simulateButton" type="button"><span class="button-icon">⚡</span><span data-en="Simulate pass closure" data-hi="पास बंद होने का सिमुलेशन">Simulate pass closure</span></button>
+              <button class="control-button subtle" id="voiceFocusButton" type="button"><span class="button-icon">◉</span><span data-en="Ask the network" data-hi="नेटवर्क से पूछें">Ask the network</span></button>
+            </div>
+          </section>
+
+          <section class="metric-grid" aria-label="Operational summary">
+            <article class="metric-card accent-lime">
+              <div class="metric-top"><span>READINESS INDEX</span><span class="trend up">↗ 6.4%</span></div>
+              <div class="metric-value">84<span>%</span></div>
+              <div class="metric-bottom"><span>Target 80%</span><div class="metric-spark spark-lime"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+            </article>
+            <article class="metric-card accent-amber">
+              <div class="metric-top"><span>72H ALERT WINDOW</span><span class="alert-tag">WATCH</span></div>
+              <div class="metric-value" id="alertDays">2.8<span>d</span></div>
+              <div class="metric-bottom"><span>Zoji La · closure risk</span><span class="mini-arrow">↗</span></div>
+            </article>
+            <article class="metric-card accent-cyan">
+              <div class="metric-top"><span>ACTIVE CONVOYS</span><span class="trend neutral">04 / 07</span></div>
+              <div class="metric-value">04</div>
+              <div class="metric-bottom"><span>3 on route · 1 staging</span><div class="metric-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i class="empty"></i></div></div>
+            </article>
+            <article class="metric-card accent-violet">
+              <div class="metric-top"><span>EDGE SYNC HEALTH</span><span class="trend up">STABLE</span></div>
+              <div class="metric-value">97<span>%</span></div>
+              <div class="metric-bottom"><span>Last sync <strong id="lastSync">16:31:08</strong></span><span class="mini-arrow">↻</span></div>
+            </article>
+          </section>
+
+          <section class="primary-grid">
+            <article class="panel map-panel" id="routing">
+              <div class="panel-heading">
+                <div><span class="section-kicker">01 / SPATIAL ROUTING</span><h2>High-altitude supply theatre</h2></div>
+                <div class="panel-tools"><span class="map-status"><span class="status-dot warning"></span><span id="mapStatus">Weather watch active</span></span><button class="icon-control" id="mapReset" type="button" title="Reset map">↺</button></div>
+              </div>
+              <div class="map-toolbar">
+                <div class="map-tabs"><button class="map-tab active" type="button">TACTICAL</button><button class="map-tab" type="button">TERRAIN</button><button class="map-tab" type="button">WEATHER</button></div>
+                <div class="map-legend"><span><i class="legend-line solid"></i> Primary route</span><span><i class="legend-line dotted"></i> Air corridor</span><span><i class="legend-node"></i> Node</span></div>
+              </div>
+              <div class="tactical-map" id="tacticalMap" aria-label="Stylized tactical map of the northern theatre">
+                <div class="map-grid-lines"></div>
+                <div class="map-coordinate coord-a">34°09'N · 77°34'E</div>
+                <div class="map-coordinate coord-b">35°10'N · 75°40'E</div>
+                <svg viewBox="0 0 900 425" role="img" aria-label="Route map linking Leh, Kargil, Drass and forward operating bases">
+                  <defs>
+                    <linearGradient id="mountainFill" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#17323b"/><stop offset="0.55" stop-color="#10252f"/><stop offset="1" stop-color="#0b1a22"/></linearGradient>
+                    <linearGradient id="mountainFill2" x1="0" x2="1"><stop offset="0" stop-color="#25434a" stop-opacity=".75"/><stop offset="1" stop-color="#0d1c24" stop-opacity=".2"/></linearGradient>
+                    <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  </defs>
+                  <path class="mountain-ridge" d="M0 340 80 250l62 44 62-121 74 85 82-179 76 103 57-62 62 86 72-110 75 77 90-103 68 92 70-25v363H0Z" fill="url(#mountainFill)"/>
+                  <path class="mountain-ridge ridge-soft" d="M0 395 90 306l63 48 79-111 62 56 79-97 53 68 78-106 68 79 78-84 61 56 90-73 83 92 78-43 81 50v180H0Z" fill="url(#mountainFill2)"/>
+                  <path class="snowline" d="M23 316 80 250l62 44 62-121 74 85 82-179 76 103 57-62 62 86 72-110 75 77 90-103 68 92" fill="none"/>
+                  <path class="route-base" d="M124 278 C214 260 250 274 318 248 S454 225 510 190 S612 181 704 143" fill="none"/>
+                  <path class="route-base route-secondary" d="M124 278 C215 310 262 344 348 341 S482 304 545 284 S670 272 774 246" fill="none"/>
+                  <path class="route-closed" d="M124 278 C214 260 250 274 318 248 S454 225 510 190 S612 181 704 143" fill="none"/>
+                  <path class="air-corridor" d="M124 278 C210 208 322 154 425 173 S610 115 704 143" fill="none"/>
+                  <path class="air-corridor secondary" d="M124 278 C260 236 400 248 548 210 S650 164 704 143" fill="none"/>
+                  <g class="map-label label-leh"><text x="116" y="305">LEH</text><text x="116" y="321" class="sub">CENTRAL DEPOT</text></g>
+                  <g class="map-label label-kargil"><text x="310" y="232">KARGIL</text><text x="310" y="248" class="sub">TRANSIT HUB</text></g>
+                  <g class="map-label label-drass"><text x="503" y="178">DRASS</text><text x="503" y="194" class="sub">KM-ZERO</text></g>
+                  <g class="map-label label-forward"><text x="696" y="132">FOB A</text><text x="696" y="148" class="sub">FORWARD POST</text></g>
+                  <g class="map-pass"><circle cx="512" cy="190" r="8"></circle><text x="527" y="215">ZOJI LA</text></g>
+                  <g class="map-pass pass-two"><circle cx="592" cy="176" r="6"></circle><text x="606" y="171">KHARDUNG LA</text></g>
+                  <g class="map-node depot" transform="translate(124 278)"><circle r="16" class="node-halo"></circle><circle r="7" class="node-dot"></circle><path d="M-4 5h8M-3 0h6M-1-6h2" class="node-mark"></path></g>
+                  <g class="map-node hub" transform="translate(318 248)"><circle r="13" class="node-halo"></circle><circle r="6" class="node-dot"></circle><path d="M-4 4h8M-3-1h6M-1-5h2" class="node-mark"></path></g>
+                  <g class="map-node kmzero" transform="translate(510 190)"><circle r="13" class="node-halo"></circle><circle r="6" class="node-dot"></circle><path d="M-3-5v10M-6-2h6" class="node-mark"></path></g>
+                  <g class="map-node fob" transform="translate(704 143)"><circle r="13" class="node-halo"></circle><circle r="6" class="node-dot"></circle><path d="M-4 4 0-5l4 9M-5 4h10" class="node-mark"></path></g>
+                  <g class="map-weather" transform="translate(786 326)"><circle r="23"></circle><path d="M-8 2c3-6 10-5 12 0 6-1 8 8 2 10h-20c-5-3-2-10 6-10Z"></path><path d="M-8 17v7M0 17v7M8 17v7" class="rain"></path><text x="-46" y="48">COLD FRONT / 64%</text></g>
+                </svg>
+                <div class="route-alert" id="routeAlert"><span class="alert-icon">!</span><span><strong>DISRUPTION SIMULATION</strong><small>Primary pass blocked · air corridor recommended</small></span><button id="dismissAlert" type="button">×</button></div>
+              </div>
+              <div class="map-footer">
+                <div class="risk-score"><span class="risk-ring">64</span><span><strong>HAT-WVI risk index</strong><small>Snow 42 · wind 38 · landslide 26</small></span></div>
+                <div class="route-summary"><span><i class="summary-dot lime"></i> 03 clear routes</span><span><i class="summary-dot amber"></i> 01 watch</span><span><i class="summary-dot red"></i> <span id="blockedLabel">00 blocked</span></span></div>
+              </div>
+            </article>
+
+            <article class="panel forecast-panel" id="forecast">
+              <div class="panel-heading compact-heading">
+                <div><span class="section-kicker">02 / AI FORECAST</span><h2>Days of cover</h2></div>
+                <button class="icon-control" id="forecastInfo" type="button" title="Forecast details">?</button>
+              </div>
+              <div class="forecast-context"><span class="context-icon">◒</span><span><strong>Regime: cold surge</strong><small>Forecast window · next 14 days</small></span><span class="context-confidence">91% <small>confidence</small></span></div>
+              <div class="forecast-list" id="forecastList">
+                <div class="forecast-row" data-class="I"><div class="forecast-class class-one">I</div><div class="forecast-label"><strong>Rations & water</strong><small>Class I · 1,240 personnel</small></div><div class="forecast-bar"><span style="width: 78%"></span></div><strong class="forecast-days" data-days="9">9<span>d</span></strong></div>
+                <div class="forecast-row" data-class="III"><div class="forecast-class class-three">III</div><div class="forecast-label"><strong>POL & heating fuel</strong><small>Class III · diesel + kerosene</small></div><div class="forecast-bar"><span style="width: 32%"></span></div><strong class="forecast-days urgent" data-days="4">4<span>d</span></strong></div>
+                <div class="forecast-row" data-class="V"><div class="forecast-class class-five">V</div><div class="forecast-label"><strong>Ammo & ordnance</strong><small>Class V · protected reserve</small></div><div class="forecast-bar"><span style="width: 59%"></span></div><strong class="forecast-days" data-days="7">7<span>d</span></strong></div>
+              </div>
+              <div class="forecast-divider"></div>
+              <div class="substitution-header"><span><strong>Smart substitution matrix</strong><small>Emergency stockout fallbacks</small></span><span class="matrix-live"><i></i> AI READY</span></div>
+              <div class="substitution-row"><span class="substitution-item"><span class="tiny-box fresh"></span>Fresh rations</span><span class="swap-arrow">→</span><span class="substitution-item"><span class="tiny-box mre"></span>MRE / packaged</span><span class="match-score">98%</span></div>
+              <div class="substitution-row"><span class="substitution-item"><span class="tiny-box diesel"></span>Diesel</span><span class="swap-arrow">→</span><span class="substitution-item"><span class="tiny-box kerosene"></span>Kerosene heat</span><span class="match-score">86%</span></div>
+              <button class="text-action" id="matrixButton" type="button">Open full matrix <span>↗</span></button>
+            </article>
+          </section>
+
+          <section class="secondary-grid">
+            <article class="panel sandbox-panel" id="sandbox">
+              <div class="panel-heading">
+                <div><span class="section-kicker">03 / WHAT-IF SANDBOX</span><h2>Stress the supply chain</h2></div>
+                <span class="sandbox-live"><span class="pulse-ring small"></span> LIVE MODEL</span>
+              </div>
+              <div class="sandbox-controls">
+                <label class="range-control"><span><strong>Troop reinforcement</strong><small>Force multiplier</small></span><output id="surgeOutput">+18%</output><input id="surgeRange" type="range" min="0" max="100" value="18" /></label>
+                <label class="range-control"><span><strong>Cold severity</strong><small>Sub-zero modifier</small></span><output id="coldOutput">64%</output><input id="coldRange" type="range" min="0" max="100" value="64" /></label>
+                <label class="range-control"><span><strong>Weather duration</strong><small>Closure persistence</small></span><output id="weatherOutput">48 hrs</output><input id="weatherRange" type="range" min="12" max="120" step="12" value="48" /></label>
+              </div>
+              <div class="timeline-card">
+                <div class="timeline-top"><span><strong>Projected depletion timeline</strong><small>All classes · after modifiers</small></span><span class="timeline-label" id="timelineLabel">48-hour scenario</span></div>
+                <div class="timeline-bar"><span class="timeline-segment safe" id="safeSegment" style="width: 38%"></span><span class="timeline-segment watch" id="watchSegment" style="width: 24%"></span><span class="timeline-segment danger" id="dangerSegment" style="width: 38%"></span><i class="timeline-marker" id="timelineMarker" style="left: 38%"></i></div>
+                <div class="timeline-axis"><span>NOW</span><span>48 HRS</span><span>4 DAYS</span><span>7 DAYS</span><span>14 DAYS</span></div>
+                <div class="depletion-grid"><div class="depletion-item"><span class="depletion-bullet amber"></span><span>Class III fuel</span><strong id="fuelDepletion">3.2 days</strong></div><div class="depletion-item"><span class="depletion-bullet lime"></span><span>Class I rations</span><strong id="rationDepletion">8.1 days</strong></div><div class="depletion-item"><span class="depletion-bullet violet"></span><span>Class V ammo</span><strong id="ammoDepletion">6.4 days</strong></div></div>
+              </div>
+            </article>
+
+            <article class="panel dispatch-panel">
+              <div class="panel-heading">
+                <div><span class="section-kicker">04 / DISPATCH RECOMMENDER</span><h2>Next best movement</h2></div>
+                <button class="icon-control" id="refreshDispatch" type="button" title="Refresh dispatch">↻</button>
+              </div>
+              <div class="dispatch-callout"><span class="callout-icon">!</span><span><strong>Move fuel before 18:00</strong><small>Class III reserve crosses red line in <b id="calloutDays">3.2 days</b>.</small></span><span class="priority-badge">P1</span></div>
+              <div class="dispatch-list">
+                <div class="dispatch-row"><span class="priority-number">01</span><span class="dispatch-route"><strong>Leh → Drass</strong><small>Convoy L-04 · 18 KL diesel</small></span><span class="dispatch-status ready">READY</span><span class="dispatch-time">04:20h</span></div>
+                <div class="dispatch-row"><span class="priority-number">02</span><span class="dispatch-route"><strong>Kargil → FOB A</strong><small>Ammo reserve · 1 protected pallet</small></span><span class="dispatch-status staging">STAGING</span><span class="dispatch-time">07:10h</span></div>
+                <div class="dispatch-row"><span class="priority-number">03</span><span class="dispatch-route"><strong>Drass → KM-Zero</strong><small>Packaged rations · 240 packs</small></span><span class="dispatch-status hold">HOLD</span><span class="dispatch-time">12:40h</span></div>
+              </div>
+              <div class="capacity-footer"><span>Convoy capacity allocated</span><strong>72%</strong><div class="capacity-bar"><i></i></div></div>
+            </article>
+          </section>
+
+          <section class="bottom-grid">
+            <article class="panel voice-panel">
+              <div class="panel-heading">
+                <div><span class="section-kicker">05 / FIELD QUERY</span><h2>Ask the network</h2></div>
+                <span class="language-badge">हिंदी + EN</span>
+              </div>
+              <p class="panel-description">Voice or text lookup for operators on restricted bandwidth.</p>
+              <div class="voice-input-wrap"><span class="search-icon">⌕</span><input id="voiceQuery" type="text" placeholder="“Kargil FOB par kitne din ka fuel bacha hai?”" aria-label="Voice or text query" /><button class="mic-button" id="micButton" type="button" aria-label="Start voice query">●</button></div>
+              <div class="voice-response" id="voiceResponse"><span class="response-dot"></span><span>Ready for a secure field query.</span><small>Tap the mic or press Enter</small></div>
+              <div class="query-chips"><button type="button" data-query="Kargil FOB par kitne din ka fuel bacha hai?">Fuel at Kargil</button><button type="button" data-query="Show Class V reserve status">Class V reserve</button><button type="button" data-query="क्या ज़ोजी ला खुला है?">Pass status</button></div>
+            </article>
+
+            <article class="panel audit-panel" id="audit">
+              <div class="panel-heading">
+                <div><span class="section-kicker">06 / SUPPLY INTEGRITY</span><h2>Cryptographic chain</h2></div>
+                <span class="audit-status"><span class="status-dot online"></span> VERIFIED</span>
+              </div>
+              <div class="audit-chain">
+                <div class="audit-node complete"><span>✓</span><div><strong>Base Depot</strong><small>QR-77A9 · hash sealed</small></div><time>14:02</time></div>
+                <div class="audit-connector complete"></div>
+                <div class="audit-node complete"><span>✓</span><div><strong>Transit Hub</strong><small>QR-77A9 · hash matched</small></div><time>15:16</time></div>
+                <div class="audit-connector live"></div>
+                <div class="audit-node live"><span>⌁</span><div><strong>KM-Zero / Drass</strong><small>Awaiting edge confirmation</small></div><time>NOW</time></div>
+              </div>
+              <button class="text-action" id="verifyButton" type="button">Run integrity check <span>↗</span></button>
+            </article>
+          </section>
+
+          <footer class="app-footer"><span>TRINETRA LOGIX · predictive forward supply chain prototype</span><span>Demo data · validate against authorized operational systems before use</span></footer>
+        </main>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✓</span><span id="toastText">Updated</span></div>
+    <script src="app.js"></script>
+  </body>
+</html>
